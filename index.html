@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="chat-container" id="chat-container">
+        <!-- Messages will be displayed here -->
+    </div>
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById('message-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission from reloading the page
+            const messageInput = document.getElementById('message-input').value;
+            if (messageInput.trim() !== '') {
+                sendMessage(messageInput);
+                document.getElementById('message-input').value = ''; // Clear the input field
+            }
+        });
+
+        function sendMessage(message) {
+            socket.emit('sendMessage', message);
+        }
+
+        socket.on('receiveMessage', function(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            document.getElementById('chat-container').appendChild(messageElement);
+        });
+    </script>
+</body>
+</html>
